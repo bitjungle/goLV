@@ -1,0 +1,79 @@
+// Description: This file contains functions for preprocessing data for PCA.
+package preprocess
+
+import (
+	"math"
+
+	"gonum.org/v1/gonum/mat"
+)
+
+// colMean calculates the mean of each column in a matrix.
+func colMean(X *mat.Dense) []float64 {
+	r, c := X.Dims()
+	colMeans := make([]float64, c)
+	for j := 0; j < c; j++ {
+		col := X.ColView(j)
+		colMeans[j] = mat.Sum(col) / float64(r)
+	}
+	return colMeans
+}
+
+// meanCenter centers the data by subtracting the mean of each column from its elements.
+func MeanCenter(X *mat.Dense) *mat.Dense {
+	r, c := X.Dims()       // Get the dimensions of the matrix
+	colMeans := colMean(X) // Calling colMean internally
+
+	centeredX := mat.NewDense(r, c, nil) // Create a new matrix to store the centered values
+	for i := 0; i < r; i++ {             // Loop over rows
+		for j := 0; j < c; j++ { // Loop over columns
+			centeredX.Set(i, j, X.At(i, j)-colMeans[j])
+		}
+	}
+	return centeredX
+}
+
+// colStdDev calculates the standard deviation of each column in a matrix.
+func colStdDev(X *mat.Dense) []float64 {
+	r, c := X.Dims()
+	colMeans := colMean(X)
+	stdDevs := make([]float64, c)
+
+	for j := 0; j < c; j++ { // Loop over columns
+		var sumSq float64   // Initialize sum of squares to zero
+		col := X.ColView(j) // Get the column
+		mean := colMeans[j] // Get the mean for the column
+
+		for i := 0; i < r; i++ { // Loop over rows
+			diff := col.AtVec(i) - mean
+			sumSq += diff * diff
+		}
+		stdDevs[j] = math.Sqrt(sumSq / float64(r)) // This is the one to use
+		//stdDevs[j] = math.Sqrt(sumSq / float64(r-1))
+		//stdDevs[j] = math.Sqrt(sumSq / float64(r/(r-1)))
+	}
+	return stdDevs
+}
+
+// scaleByStdDev scales each column of the matrix by its standard deviation.
+func ScaleByStdDev(X *mat.Dense) *mat.Dense {
+	r, c := X.Dims()                   // Get the dimensions of the matrix
+	stdDevs := colStdDev(X)            // Calculate standard deviations for each column
+	scaledX := mat.NewDense(r, c, nil) // Create a new matrix to store the scaled values
+
+	for j := 0; j < c; j++ { // Loop over columns
+		stdDev := stdDevs[j]     //
+		for i := 0; i < r; i++ { // Loop over rows
+			scaledVal := X.At(i, j) / stdDev
+			scaledX.Set(i, j, scaledVal)
+		}
+	}
+	return scaledX
+}
+
+// autoscale centers the data by subtracting the mean of each column
+// and then scales it by dividing by the standard deviation of each column.
+func Autoscale(X *mat.Dense) *mat.Dense {
+	centeredX := MeanCenter(X)
+	autoscaledX := ScaleByStdDev(centeredX)
+	return autoscaledX
+}

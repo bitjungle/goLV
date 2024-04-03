@@ -31,7 +31,7 @@ var AppVersion string
 
 func main() {
 	// Print copyright and license information
-	fmt.Println("goLV Principal Component Analysis (PCA)")
+	fmt.Println("goLV Principal Component Analysis (PCA) version ", AppVersion)
 	fmt.Println("Copyright (C) 2024 - BITJUNGLE Rune Mathisen")
 	fmt.Println("This program is distributed under the Apache license version 2.0")
 	fmt.Println()

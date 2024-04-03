@@ -1,4 +1,4 @@
-package main
+package pca_cmd
 
 import (
 	"flag"

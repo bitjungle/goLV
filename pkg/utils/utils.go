@@ -71,6 +71,7 @@ func CreateFilledSlice(length int, value float64) ([]float64, error) {
 	return slice, nil
 }
 
+// PrettyPrintMatrix prints a mat.Matrix in a formatted way.
 func PrettyPrintMatrix(matrix mat.Matrix, tit ...string) {
 	title := "Matrix" // default title
 	if len(tit) > 0 {
@@ -82,6 +83,28 @@ func PrettyPrintMatrix(matrix mat.Matrix, tit ...string) {
 	for i := 0; i < r; i++ {
 		for j := 0; j < c; j++ {
 			fmt.Printf("%9.6f ", matrix.At(i, j))
+		}
+		fmt.Println()
+	}
+	fmt.Println("---")
+}
+
+// PrettyPrintSlice prints a 2D slice of float64 values in a formatted way.
+func PrettyPrintSlice(slice [][]float64, tit ...string) {
+	title := "Matrix" // default title
+	if len(tit) > 0 {
+		title = tit[0] // if title is provided, use it
+	}
+
+	r := len(slice)
+	c := 0
+	if r > 0 {
+		c = len(slice[0])
+	}
+	fmt.Printf("--- %s: Dimensions (%d, %d)\n", title, r, c)
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
+			fmt.Printf("%9.6f ", slice[i][j])
 		}
 		fmt.Println()
 	}

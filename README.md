@@ -7,7 +7,7 @@ Example usage:
 pca -scale -comps 2 -output mymodel.json path/to/iris_data.csv
 ```
 
-![goLV](img/golv-logo-white-bg.webp)
+![goLV](img/golv-logo-transp-bg.webp)
 
 --- 
 Copyright (c) 2024 BITJUNGLE Rune Mathisen 

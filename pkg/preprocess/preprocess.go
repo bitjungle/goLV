@@ -33,17 +33,17 @@ func colMean(X *mat.Dense) []float64 {
 }
 
 // meanCenter centers the data by subtracting the mean of each column from its elements.
-func MeanCenter(X *mat.Dense) *mat.Dense {
+func MeanCenter(X *mat.Dense) (*mat.Dense, []float64) {
 	r, c := X.Dims()       // Get the dimensions of the matrix
 	colMeans := colMean(X) // Calling colMean internally
 
 	centeredX := mat.NewDense(r, c, nil) // Create a new matrix to store the centered values
-	for i := 0; i < r; i++ {             // Loop over rows
-		for j := 0; j < c; j++ { // Loop over columns
+	for i := 0; i < r; i++ {
+		for j := 0; j < c; j++ {
 			centeredX.Set(i, j, X.At(i, j)-colMeans[j])
 		}
 	}
-	return centeredX
+	return centeredX, colMeans
 }
 
 // colStdDev calculates the standard deviation of each column in a matrix.
@@ -52,7 +52,7 @@ func colStdDev(X *mat.Dense) []float64 {
 	colMeans := colMean(X)
 	stdDevs := make([]float64, c)
 
-	for j := 0; j < c; j++ { // Loop over columns
+	for j := 0; j < c; j++ {
 		var sumSq float64   // Initialize sum of squares to zero
 		col := X.ColView(j) // Get the column
 		mean := colMeans[j] // Get the mean for the column
@@ -69,25 +69,25 @@ func colStdDev(X *mat.Dense) []float64 {
 }
 
 // scaleByStdDev scales each column of the matrix by its standard deviation.
-func ScaleByStdDev(X *mat.Dense) *mat.Dense {
+func ScaleByStdDev(X *mat.Dense) (*mat.Dense, []float64) {
 	r, c := X.Dims()                   // Get the dimensions of the matrix
-	stdDevs := colStdDev(X)            // Calculate standard deviations for each column
+	colStd := colStdDev(X)             // Calculate standard deviations for each column
 	scaledX := mat.NewDense(r, c, nil) // Create a new matrix to store the scaled values
 
-	for j := 0; j < c; j++ { // Loop over columns
-		stdDev := stdDevs[j]     //
-		for i := 0; i < r; i++ { // Loop over rows
-			scaledVal := X.At(i, j) / stdDev
+	for j := 0; j < c; j++ {
+		std := colStd[j]
+		for i := 0; i < r; i++ {
+			scaledVal := X.At(i, j) / std
 			scaledX.Set(i, j, scaledVal)
 		}
 	}
-	return scaledX
+	return scaledX, colStd
 }
 
 // autoscale centers the data by subtracting the mean of each column
 // and then scales it by dividing by the standard deviation of each column.
-func Autoscale(X *mat.Dense) *mat.Dense {
-	centeredX := MeanCenter(X)
-	autoscaledX := ScaleByStdDev(centeredX)
-	return autoscaledX
+func Autoscale(X *mat.Dense) (*mat.Dense, []float64, []float64) {
+	centeredX, colMeans := MeanCenter(X)
+	autoscaledX, colStd := ScaleByStdDev(centeredX)
+	return autoscaledX, colMeans, colStd
 }

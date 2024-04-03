@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package pca_cmd
+package main
 
 import (
 	"flag"
@@ -71,10 +71,13 @@ func main() {
 	}
 
 	var Xpre *mat.Dense
+	var Xmean []float64
+	var Xstd []float64
 	if *autoScaleFlag {
-		Xpre = preprocess.Autoscale(X)
+		Xpre, Xmean, Xstd = preprocess.Autoscale(X)
 	} else {
-		Xpre = preprocess.MeanCenter(X)
+		Xpre, Xmean = preprocess.MeanCenter(X)
+		Xstd, _ = utils.CreateFilledSlice(Xpre.RawMatrix().Cols, 1.0)
 	}
 
 	// Perform NIPALS PCA
@@ -89,5 +92,6 @@ func main() {
 	fmt.Printf("Eigenvalues:\n%v\n", eigv)
 	variancePercentages := pca.CalculateVariancePercentages(eigv)
 	fmt.Printf("Variance percentages:\n%v\n", variancePercentages)
-
+	fmt.Printf("X mean:\n%v\n", Xmean)
+	fmt.Printf("X std:\n%v\n", Xstd)
 }

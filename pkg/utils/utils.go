@@ -45,6 +45,19 @@ func SliceToDense(data [][]float64) *mat.Dense {
 	return mat.NewDense(rows, cols, flatData)
 }
 
+// CreateFilledSlice creates a slice of float64 of a specified length, filled with a given value.
+func CreateFilledSlice(length int, value float64) ([]float64, error) {
+	if length < 0 {
+		return nil, fmt.Errorf("length cannot be negative")
+	}
+
+	slice := make([]float64, length)
+	for i := range slice {
+		slice[i] = value
+	}
+	return slice, nil
+}
+
 func PrettyPrintMatrix(matrix mat.Matrix, tit ...string) {
 	title := "Matrix" // default title
 	if len(tit) > 0 {

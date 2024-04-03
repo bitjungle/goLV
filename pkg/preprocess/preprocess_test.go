@@ -74,7 +74,7 @@ func TestMeanCenter(t *testing.T) {
 	X := getTestData("raw")
 	utils.PrettyPrintMatrix(X, "Raw data")
 
-	centered := preprocess.MeanCenter(X)
+	centered, _ := preprocess.MeanCenter(X)
 	expected := getTestData("centered")
 
 	if !reflect.DeepEqual(centered, expected) {
@@ -86,7 +86,7 @@ func TestMeanCenter(t *testing.T) {
 func TestAutoscale(t *testing.T) {
 	X := getTestData("raw")
 
-	autoscaled := preprocess.Autoscale(X)
+	autoscaled, _, _ := preprocess.Autoscale(X)
 	expected := getTestData("autoscaled")
 
 	tolerance := 0.01 // Equal to two decimal places

@@ -4,8 +4,10 @@ go Latent Variable modeling
 Example usage:
 
 ```sh 
-pca -scale -comps 2 path/to/iris_data.csv
+pca -scale -comps 2 -output mymodel.json path/to/iris_data.csv
 ```
+
+![goLV](img/golv-logo-white-bg.webp)
 
 --- 
 Copyright (c) 2024 BITJUNGLE Rune Mathisen 

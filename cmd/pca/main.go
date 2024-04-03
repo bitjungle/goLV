@@ -53,16 +53,12 @@ func main() {
 
 	filename := flag.Arg(0)
 
+	// Read and prepare input data
 	records, err := readdata.ProcessCSV(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// Print input data
-	log.Println("Variable names:", records.VariableNames)
-	log.Println("Object names:", records.ObjectNames)
 	X := utils.SliceToDense(records.Data)
-	utils.PrettyPrintMatrix(X, "Data (X)")
 
 	// Determine the number of components based on the flag or default to number of columns
 	numComponents := *numComponentsFlag
@@ -87,6 +83,9 @@ func main() {
 	}
 
 	// Display results
+	fmt.Printf("Variable names:\n%v\n", records.VariableNames)
+	fmt.Printf("Object names:\n%v\n", records.ObjectNames)
+	fmt.Printf("Number of components: %v\n", numComponents)
 	utils.PrettyPrintMatrix(T, "Scores (T)")
 	utils.PrettyPrintMatrix(P, "Loadings (P)")
 	fmt.Printf("Eigenvalues:\n%v\n", eigv)

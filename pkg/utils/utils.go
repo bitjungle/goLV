@@ -45,6 +45,19 @@ func SliceToDense(data [][]float64) *mat.Dense {
 	return mat.NewDense(rows, cols, flatData)
 }
 
+// DenseToSlice converts a *mat.Dense matrix to a [][]float64.
+func DenseToSlice(d *mat.Dense) [][]float64 {
+	r, c := d.Dims()
+	data := make([][]float64, r)
+	for i := 0; i < r; i++ {
+		data[i] = make([]float64, c)
+		for j := 0; j < c; j++ {
+			data[i][j] = d.At(i, j)
+		}
+	}
+	return data
+}
+
 // CreateFilledSlice creates a slice of float64 of a specified length, filled with a given value.
 func CreateFilledSlice(length int, value float64) ([]float64, error) {
 	if length < 0 {

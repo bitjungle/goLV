@@ -14,6 +14,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -39,6 +40,7 @@ func main() {
 	numComponentsFlag := flag.Int("comps", -1, "Number of principal components to compute")
 	autoScaleFlag := flag.Bool("scale", false, "Apply autoscaling")
 	versionFlag := flag.Bool("v", false, "Prints the version information")
+	outputFile := flag.String("output", "", "Path to output results as a JSON file (optional)")
 
 	flag.Parse()
 
@@ -82,16 +84,50 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error performing NIPALS PCA: %v", err)
 	}
-
-	// Display results
-	fmt.Printf("Variable names:\n%v\n", records.VariableNames)
-	fmt.Printf("Object names:\n%v\n", records.ObjectNames)
-	fmt.Printf("Number of components: %v\n", numComponents)
-	utils.PrettyPrintMatrix(T, "Scores (T)")
-	utils.PrettyPrintMatrix(P, "Loadings (P)")
-	fmt.Printf("Eigenvalues:\n%v\n", eigv)
 	variancePercentages := pca.CalculateVariancePercentages(eigv)
-	fmt.Printf("Variance percentages:\n%v\n", variancePercentages)
-	fmt.Printf("X mean:\n%v\n", Xmean)
-	fmt.Printf("X std:\n%v\n", Xstd)
+
+	// Prepare results
+	results := struct {
+		VariableNames       []string    `json:"variable_names"`
+		ObjectNames         []string    `json:"object_names"`
+		NumComponents       int         `json:"num_components"`
+		Scores              [][]float64 `json:"scores"`
+		Loadings            [][]float64 `json:"loadings"`
+		Eigenvalues         []float64   `json:"eigenvalues"`
+		VariancePercentages []float64   `json:"variance_percentages"`
+		XMean               []float64   `json:"x_mean"`
+		XStd                []float64   `json:"x_std"`
+	}{
+		VariableNames:       records.VariableNames,
+		ObjectNames:         records.ObjectNames,
+		NumComponents:       numComponents,
+		Scores:              utils.DenseToSlice(T),
+		Loadings:            utils.DenseToSlice(P),
+		Eigenvalues:         eigv,
+		VariancePercentages: variancePercentages,
+		XMean:               Xmean,
+		XStd:                Xstd,
+	}
+
+	// Output results to JSON file if outputFile is provided, otherwise print to console
+	if *outputFile != "" {
+		file, err := os.Create(*outputFile)
+		if err != nil {
+			log.Fatalf("Failed to create output file: %v", err)
+		}
+		defer file.Close()
+		json.NewEncoder(file).Encode(results)
+		fmt.Printf("Results saved to %s\n", *outputFile)
+	} else {
+		// Display results
+		fmt.Printf("Variable names:\n%v\n", results.VariableNames)
+		fmt.Printf("Object names:\n%v\n", results.ObjectNames)
+		fmt.Printf("Number of components: %v\n", results.NumComponents)
+		utils.PrettyPrintMatrix(T, "Scores (T)")
+		utils.PrettyPrintMatrix(P, "Loadings (P)")
+		fmt.Printf("Eigenvalues:\n%v\n", results.Eigenvalues)
+		fmt.Printf("Variance percentages:\n%v\n", results.VariancePercentages)
+		fmt.Printf("X mean:\n%v\n", results.XMean)
+		fmt.Printf("X std:\n%v\n", results.XStd)
+	}
 }

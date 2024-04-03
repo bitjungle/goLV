@@ -51,7 +51,7 @@ func main() {
 	}
 
 	if len(flag.Args()) < 1 {
-		log.Fatal("Please provide a CSV file")
+		log.Fatal("usage: pca [-scale] [-comps #] [-output <filename>] <filename>")
 	}
 
 	filename := flag.Arg(0)

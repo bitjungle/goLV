@@ -13,26 +13,24 @@
 // limitations under the License.
 //
 // Description: This file contains tests for the readdata package.
-package readdata_test
+package readdata
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/bitjungle/goLV/pkg/readdata"
 )
 
 // TestProcessCSV tests the ProcessCSV function using main_test_data.csv.
 func TestProcessCSV(t *testing.T) {
 	testDataFile := "../../data/read_test_data.csv"
 
-	got, err := readdata.ProcessCSV(testDataFile)
+	got, err := ProcessCSV(testDataFile)
 	if err != nil {
 		t.Fatalf("ProcessCSV() error = %v, wantErr nil", err)
 	}
 
 	// Define the expected result based on the contents of main_test_data.csv
-	want := readdata.ProcessedData{
+	want := ProcessedData{
 		VariableNames: []string{"Variable 1", "Variable2", "Variable3"},
 		ObjectNames:   []string{"Object 1", "Object2", "Object3", "Object4", "Object5", "Object6", "Object7", "Object8", "Object9", "Object10"},
 		Data: [][]float64{

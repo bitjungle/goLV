@@ -13,14 +13,13 @@
 // limitations under the License.
 //
 // Description: This file contains tests for the preprocess functions.
-package preprocess_test
+package preprocess
 
 import (
 	"math"
 	"reflect"
 	"testing"
 
-	"github.com/bitjungle/goLV/pkg/preprocess"
 	"github.com/bitjungle/goLV/pkg/utils"
 	"gonum.org/v1/gonum/mat"
 )
@@ -74,7 +73,7 @@ func TestMeanCenter(t *testing.T) {
 	X := getTestData("raw")
 	utils.PrettyPrintMatrix(X, "Raw data")
 
-	centered, _ := preprocess.MeanCenter(X)
+	centered, _ := MeanCenter(X)
 	expected := getTestData("centered")
 
 	if !reflect.DeepEqual(centered, expected) {
@@ -86,7 +85,7 @@ func TestMeanCenter(t *testing.T) {
 func TestAutoscale(t *testing.T) {
 	X := getTestData("raw")
 
-	autoscaled, _, _ := preprocess.Autoscale(X)
+	autoscaled, _, _ := Autoscale(X)
 	expected := getTestData("autoscaled")
 
 	tolerance := 0.01 // Equal to two decimal places

@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package utils_test
+package utils
 
 import (
 	"reflect"
 	"testing"
-
-	"github.com/bitjungle/goLV/pkg/utils"
 )
 
 // TestCreateFilledSlice tests the CreateFilledSlice function.
@@ -36,7 +34,7 @@ func TestCreateFilledSlice(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		got, err := utils.CreateFilledSlice(tc.length, tc.value)
+		got, err := CreateFilledSlice(tc.length, tc.value)
 		if (err != nil) != tc.wantErr {
 			t.Errorf("CreateFilledSlice() error = %v, wantErr %v", err, tc.wantErr)
 			continue

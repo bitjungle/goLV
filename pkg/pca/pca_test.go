@@ -13,13 +13,12 @@
 // limitations under the License.
 //
 // Description: This file contains tests for the pca package.
-package pca_test
+package pca
 
 import (
 	"math"
 	"testing"
 
-	"github.com/bitjungle/goLV/pkg/pca"
 	"gonum.org/v1/gonum/mat"
 )
 
@@ -50,7 +49,7 @@ func TestNIPALS(t *testing.T) {
 	X := mat.NewDense(7, 5, data)
 
 	// Perform PCA
-	T, P, _, err := pca.NIPALS(X, 5)
+	T, P, _, err := NIPALS(X, 5)
 	if err != nil {
 		t.Fatalf("NIPALS returned an error: %v", err)
 	}
